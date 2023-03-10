@@ -20,7 +20,7 @@ public class RachunekBankowy
         if(rachunekZrodlowy == null && rachunekDocelowy == null)
             throw new Exception("Rachunek zrodlowy i docelowy nie mogą być jednocześnie puste");
         
-        if(rachunekZrodlowy.CzyDozwolonyDebet == false && rachunekZrodlowy.StanRachunku < kwota)
+        if(rachunekZrodlowy != null && rachunekZrodlowy.CzyDozwolonyDebet == false && rachunekZrodlowy.StanRachunku < kwota)
             throw new Exception("Nie można dokonać transakcji, brak środków na koncie");
 
         if (rachunekZrodlowy == null)
@@ -98,34 +98,42 @@ public class RachunekBankowy
         set { _posiadaczeRachunku = value; }
     }
     
-    public static List<PosiadaczRachunku> operator +(
+    public static RachunekBankowy operator +(
         RachunekBankowy rachunek, 
-        PosiadaczRachunku posiadacz)
-    {
+        PosiadaczRachunku posiadacz
+        ) {
         if (rachunek._posiadaczeRachunku.Contains(posiadacz))
             throw new Exception("Posiadacz już jest na liście");
             
         rachunek._posiadaczeRachunku.Add(posiadacz);
-        return rachunek._posiadaczeRachunku;
+        return rachunek;
     }
     
-    public static List<PosiadaczRachunku> operator -(
+    public static RachunekBankowy operator -(
         RachunekBankowy rachunek, 
-        PosiadaczRachunku posiadacz)
-    {
+        PosiadaczRachunku posiadacz
+        ) {
         if (rachunek._posiadaczeRachunku.Count == 1)
             throw new Exception("Nie można usunąć ostatniego posiadacza rachunku");
         if (!rachunek._posiadaczeRachunku.Contains(posiadacz))
             throw new Exception("Nie można usunąć posiadacza, który nie jest na liście");
         rachunek._posiadaczeRachunku.Remove(posiadacz);
-        return rachunek._posiadaczeRachunku;
+        return rachunek;
     }
 
     public override string ToString()
     {
+        String posiadacze = "";
+        foreach(PosiadaczRachunku posiadaczRachunku in _posiadaczeRachunku)
+            posiadacze += posiadaczRachunku + "; ";
+
+        String transakcje = "";
+        foreach(Transakcja transakcja in _transakcje)
+            transakcje += transakcja + "; ";
+        
         return $"Numer rachunku: {_numer}, " +
                $"stan rachunku: {_stanRachunku}," +
-               $"posiadacze rachunku: {_posiadaczeRachunku}," +
-               $"transakcje rachunku: {_transakcje}";
+               $"posiadacze rachunku: [{posiadacze}]," +
+               $"transakcje rachunku: [{transakcje}]";
     }
 }

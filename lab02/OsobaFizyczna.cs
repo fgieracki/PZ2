@@ -2,39 +2,51 @@
 
 class OsobaFizyczna : PosiadaczRachunku
 {
-    private string imie;
+    private string _imie;
     public string Imie
     {
-        get { return imie; }
-        set { imie = value; }
+        get { return _imie; }
+        set { _imie = value; }
     }
     
-    private string nazwisko;
+    private string _nazwisko;
     public string Nazwisko
     {
-        get { return nazwisko; }
-        set { nazwisko = value; }
+        get { return _nazwisko; }
+        set { _nazwisko = value; }
     }
 
-    private string drugieImie;
+    private string _drugieImie;
     public string DrugieImie
     {
-        get { return drugieImie; }
-        set { drugieImie = value; }
+        get { return _drugieImie; }
+        set { _drugieImie = value; }
     }
         
-    private string pesel;
+    private string _pesel;
     public string Pesel
     {
-        get { return pesel; }
-        set { pesel = value; }
+        get { return _pesel; }
+        set
+        {
+            if(value == null)
+                throw new Exception("Pesel nie moze byc pusty");
+            
+            if(value != null && value.Length != 11)
+                throw new Exception("Pesel musi mieć 11 znaków");
+            
+            if(!value.All(char.IsDigit))
+                throw new Exception("Pesel musi składać się tylko z cyfr");
+            
+            _pesel = value;
+        }
     }
 
-    private string numerPaszportu;
+    private string _numerPaszportu;
     public string NumerPaszportu
     {
-        get { return numerPaszportu; }
-        set { numerPaszportu = value; }
+        get { return _numerPaszportu; }
+        set { _numerPaszportu = value; }
     }
 
 
@@ -53,15 +65,15 @@ class OsobaFizyczna : PosiadaczRachunku
         if(!pesel.All(char.IsDigit))
             throw new Exception("Pesel musi składać się tylko z cyfr");
 
-        this.imie = imie;
-        this.nazwisko = nazwisko;
-        this.drugieImie = drugieImie;
-        this.pesel = pesel;
-        this.numerPaszportu = numerPaszportu;
+        this._imie = imie;
+        this._nazwisko = nazwisko;
+        this._drugieImie = drugieImie;
+        this._pesel = pesel;
+        this._numerPaszportu = numerPaszportu;
     }
 
     public override string ToString()
     {
-        return "Osoba fizyczna: " + imie + " " + nazwisko;
+        return "Osoba fizyczna: " + _imie + " " + _nazwisko;
     }
 }

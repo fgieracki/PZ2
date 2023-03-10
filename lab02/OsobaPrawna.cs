@@ -2,27 +2,27 @@
 
 class OsobaPrawna : PosiadaczRachunku
 {
-    private string nazwa;
+    private string _nazwa;
     public string Nazwa
     {
-        get { return nazwa; }
+        get { return _nazwa; }
     }
 
-    private string siedziba;
+    private string _siedziba;
     public string Siedziba
     {
-        get { return siedziba; }
+        get { return _siedziba; }
     }
     
     
     public override string ToString()
     {
-        return "Osoba prawna: " + nazwa + " " + siedziba;
+        return "Osoba prawna: " + _nazwa + " " + _siedziba;
     }
 
     public OsobaPrawna(string nazwa, string siedziba)
     {
-        this.nazwa = nazwa;
-        this.siedziba = siedziba;
+        this._nazwa = nazwa;
+        this._siedziba = siedziba;
     }
 }

@@ -2,53 +2,52 @@
 
 public class Transakcja
 {
-    private RachunekBankowy rachunekZrodlowy;
-    private RachunekBankowy rachunekDocelowy;
-    private Decimal kwota;
-    private String opis;
+    private RachunekBankowy _rachunekZrodlowy;
+    private RachunekBankowy _rachunekDocelowy;
+    private Decimal _kwota;
+    private String _opis;
 
     public Transakcja(RachunekBankowy rachunekZrodlowy, RachunekBankowy rachunekDocelowy, decimal kwota, string opis)
     {
-        if (this.rachunekZrodlowy == null)
-            throw new ArgumentNullException("rachunek zrodlowy nie moze byc pusty");
+        if (rachunekZrodlowy == null && rachunekDocelowy == null)
+            throw new Exception("Oba rachunki nie mogą być puste");
 
-        if (this.rachunekDocelowy == null)
-            throw new ArgumentNullException("rachunek docelowy nie moze byc pusty");
-
-        this.rachunekZrodlowy = rachunekZrodlowy;
-        this.rachunekDocelowy = rachunekDocelowy;
-        this.kwota = kwota;
-        this.opis = opis;
+        this._rachunekZrodlowy = rachunekZrodlowy;
+        this._rachunekDocelowy = rachunekDocelowy;
+        this._kwota = kwota;
+        this._opis = opis;
     }
 
 
     public RachunekBankowy RachunekZrodlowy
     {
-        get => rachunekZrodlowy;
-        set => rachunekZrodlowy = value ?? throw new ArgumentNullException(nameof(value));
+        get => _rachunekZrodlowy;
+        set => _rachunekZrodlowy = value ?? throw new ArgumentNullException(nameof(value));
     }
 
     public RachunekBankowy RachunekDocelowy
     {
-        get => rachunekDocelowy;
-        set => rachunekDocelowy = value ?? throw new ArgumentNullException(nameof(value));
+        get => _rachunekDocelowy;
+        set => _rachunekDocelowy = value ?? throw new ArgumentNullException(nameof(value));
     }
 
     public decimal Kwota
     {
-        get => kwota;
-        set => kwota = value;
+        get => _kwota;
+        set => _kwota = value;
     }
 
     public string Opis
     {
-        get => opis;
-        set => opis = value ?? throw new ArgumentNullException(nameof(value));
+        get => _opis;
+        set => _opis = value ?? throw new ArgumentNullException(nameof(value));
     }
 
 
     public override string ToString()
     {
-        return "Transakcja: z " + rachunekZrodlowy + " do " + rachunekDocelowy + ", kwota:  " + kwota + ", opis: " + opis;
+        String rachunekZrodlowy = _rachunekZrodlowy == null ? " wpłata " : _rachunekZrodlowy.Numer;
+        String rachunekDocelowy = _rachunekDocelowy == null ? " wypłata " : _rachunekDocelowy.Numer;
+        return "Transakcja: z " + rachunekZrodlowy + " do " + rachunekDocelowy + ", kwota:  " + _kwota + ", opis: " + _opis;
     }
 }
