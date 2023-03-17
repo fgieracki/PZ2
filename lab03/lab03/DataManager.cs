@@ -1,11 +1,12 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Xml.Serialization;
 
 namespace lab03;
 
 public class DataManager
 {
-    private List<Tweet> _tweets = new();
+    public List<Tweet> _tweets = new();
 
     public void readData()
     {
@@ -16,14 +17,38 @@ public class DataManager
         }
     }
 
-    public void writeToXML()
+    public void writeToXML(string input_file, string output_file)
     {
-        System.IO.FileStream file = System.IO.File.Create("../../../tweets.xml"); 
-        foreach(var tweet in _tweets)
+
+        if (input_file == null && output_file != null)
         {
+            TweetDTO tweets = new TweetDTO();
+            System.IO.FileStream file = System.IO.File.Create(@"../../../" + output_file);
+            
+            tweets.tweets = _tweets;
+            
             System.Xml.Serialization.XmlSerializer x = 
-                new System.Xml.Serialization.XmlSerializer(tweet.GetType());
-            x.Serialize(file, tweet);
+                new System.Xml.Serialization.XmlSerializer(tweets.GetType());
+            x.Serialize(file, tweets);
+            file.Close();
+        }
+        else if(output_file == null && input_file != null)
+        {
+            TweetDTO objectToDeserialize = new TweetDTO();
+            TweetDTO tweetDTO = new TweetDTO();
+            XmlSerializer xmlserializer = new System.Xml.Serialization.XmlSerializer(objectToDeserialize.GetType());
+
+            using(StreamReader streamReader = new StreamReader(@"../../../" + input_file)) 
+            { 
+                 tweetDTO = (TweetDTO)xmlserializer.Deserialize(streamReader); 
+            }
+            Console.WriteLine(objectToDeserialize.tweets.Count());
+            
+            _tweets = new List<Tweet>();
+            foreach(var tweet in tweetDTO.tweets)
+            {
+                _tweets.Add(tweet);
+            }
         }
     }
     
@@ -34,6 +59,21 @@ public class DataManager
             .ThenBy(tweet => DateTime.Parse(
                 tweet.CreatedAt.Replace("at", ""))
             ).ToList();
+    }
+
+    public List<Tweet> sortByUserName()
+    {
+        return _tweets
+            .OrderBy(tweet => tweet.UserName).ToList();
+    }
+
+    public List<Tweet> sortByCreatedAt()
+    {
+        return _tweets
+            .OrderBy(tweet => DateTime
+                .Parse(tweet.CreatedAt
+                    .Replace("at", "")))
+            .ToList();
     }
     
     public Tweet getLatestTweet()

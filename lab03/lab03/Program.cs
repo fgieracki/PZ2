@@ -11,8 +11,9 @@ class main
         dataManager.readData();
         
         //subtask 2
-        dataManager.writeToXML();
-        
+        dataManager.writeToXML(null, "out1.xml");
+        dataManager.writeToXML("out1.xml", null);
+
         Console.WriteLine("Subtask 3:");
         var sortedTweets = dataManager.sortByUserNameAndCreatedAt();
         foreach(var tweet in sortedTweets)
