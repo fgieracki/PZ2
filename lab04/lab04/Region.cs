@@ -2,8 +2,8 @@
 
 public class Region
 {
-    private String regionid { get; set; }
-    private String regiondescription { get; set; }
+    public  String regionid { get; set; }
+    public  String regiondescription { get; set; }
     
     public static Region FromCsv(String csvLine)
     {

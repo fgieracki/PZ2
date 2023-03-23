@@ -2,8 +2,8 @@
 
 public class EmployeeTerritory
 {
-    String employeeid { get; set; }
-    String territoryid { get; set; }
+    public  String employeeid { get; set; }
+    public String territoryid { get; set; }
     
     public static EmployeeTerritory FromCsv(string csvLine)
     {

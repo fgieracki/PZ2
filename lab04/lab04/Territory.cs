@@ -2,9 +2,9 @@
 
 public class Territory
 {
-    String territoryid { get; set; }
-    String territorydescription { get; set; }
-    String regionid { get; set; }
+    public String territoryid { get; set; }
+    public String territorydescription { get; set; }
+    public String regionid { get; set; }
     
     public static Territory FromCsv(string csvLine)
     {
