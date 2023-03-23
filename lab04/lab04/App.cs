@@ -2,12 +2,12 @@
 
 public class App
 {
-    static List<Territory> territories = new();
-    static List<Region> regions = new();
-    static List<Employee> employees = new();
-    static List<EmployeeTerritory> employeeTerritories = new();
-    static List<Order> orders = new();
-    static List<OrderDetails> orderDetails = new();
+    private static List<Territory> _territories = new();
+    private static List<Region> _regions = new();
+    private static List<Employee> _employees = new();
+    private static List<EmployeeTerritory> _employeeTerritories = new();
+    private static List<Order> _orders = new();
+    private static List<OrderDetails> _orderDetails = new();
 
 
     public static List<T> ReadData<T> (String path, Func<String, T> FromCsv)
@@ -23,12 +23,12 @@ public class App
     
     public static void Main()
     {
-        territories = ReadData("../../../data/territories.csv", Territory.FromCsv);
-        regions = ReadData("../../../data/regions.csv", Region.FromCsv);
-        employees = ReadData("../../../data/employees.csv", Employee.FromCsv);
-        employeeTerritories = ReadData("../../../data/employee_territories.csv", EmployeeTerritory.FromCsv);
-        orders = ReadData("../../../data/orders.csv", Order.FromCsv);
-        orderDetails = ReadData("../../../data/orders_details.csv", OrderDetails.FromCsv);
+        _territories = ReadData("../../../data/territories.csv", Territory.FromCsv);
+        _regions = ReadData("../../../data/regions.csv", Region.FromCsv);
+        _employees = ReadData("../../../data/employees.csv", Employee.FromCsv);
+        _employeeTerritories = ReadData("../../../data/employee_territories.csv", EmployeeTerritory.FromCsv);
+        _orders = ReadData("../../../data/orders.csv", Order.FromCsv);
+        _orderDetails = ReadData("../../../data/orders_details.csv", OrderDetails.FromCsv);
         
         printData();
         Task2();
@@ -38,10 +38,10 @@ public class App
         Task6();
     }
 
-    public static void Task2()
+    private static void Task2()
     {
         Console.WriteLine("Task 2");
-        var result = from employee in employees
+        var result = from employee in _employees
             select employee.lastname;
         foreach(var record in result.ToList())
         {
@@ -49,28 +49,28 @@ public class App
         }
     }
 
-    public static void Task3()
+    private static void Task3()
     {
         Console.WriteLine("Task 3");
 
-        var result = from employee in employees
-            join employeeTerritory in employeeTerritories on employee.employeeid equals employeeTerritory.employeeid
-            join territory in territories on employeeTerritory.territoryid equals territory.territoryid
-            join region in regions on territory.regionid equals region.regionid
+        var result = from employee in _employees
+            join employeeTerritory in _employeeTerritories on employee.employeeid equals employeeTerritory.employeeid
+            join territory in _territories on employeeTerritory.territoryid equals territory.territoryid
+            join region in _regions on territory.regionid equals region.regionid
             select new {employee.lastname, region.regiondescription, territory.territorydescription};
         
         foreach(var record in result.ToList())
             Console.WriteLine(record.ToString());
     }
 
-    public static void Task4()
+    private static void Task4()
     {
         Console.WriteLine("Task 4");
 
-        var result = from employee in employees
-                join employeeTerritory in employeeTerritories on employee.employeeid equals employeeTerritory.employeeid
-                join territory in territories on employeeTerritory.territoryid equals territory.territoryid
-                join region in regions on territory.regionid equals region.regionid
+        var result = from employee in _employees
+                join employeeTerritory in _employeeTerritories on employee.employeeid equals employeeTerritory.employeeid
+                join territory in _territories on employeeTerritory.territoryid equals territory.territoryid
+                join region in _regions on territory.regionid equals region.regionid
                 group employee by region.regiondescription
                 into g
                 select new { Region = g.Key, Employees = g.ToList() };
@@ -88,13 +88,13 @@ public class App
         
     }
     
-    public static void Task5()
+    private static void Task5()
     {
         Console.WriteLine("Task 5");
-        var result = from employee in employees
-            join employeeTerritory in employeeTerritories on employee.employeeid equals employeeTerritory.employeeid
-            join territory in territories on employeeTerritory.territoryid equals territory.territoryid
-            join region in regions on territory.regionid equals region.regionid
+        var result = from employee in _employees
+            join employeeTerritory in _employeeTerritories on employee.employeeid equals employeeTerritory.employeeid
+            join territory in _territories on employeeTerritory.territoryid equals territory.territoryid
+            join region in _regions on territory.regionid equals region.regionid
             group employee by region.regiondescription
             into g
             select new { Region = g.Key, Employees = g.ToList().Count };
@@ -104,36 +104,36 @@ public class App
         }
     }
 
-    public static void Task6()
+    private static void Task6()
     {
         //get employee last name, amount of made orders, average cost of the order (UnitPrice * Quantity * (1 - discount)) and maximum order value joining order details
         Console.WriteLine("Task 6");
-        var result = from employee in employees
-            join order in orders on employee.employeeid equals order.employeeid
-            join orderDetails in orderDetails on order.orderid equals orderDetails.orderid
+        var result = from employee in _employees
+            join order in _orders on employee.employeeid equals order.employeeid
+            join orderDetails in _orderDetails on order.orderid equals orderDetails.orderid
             group orderDetails by employee.lastname
             into g
             select new {Employee = g.Key, 
                 Orders = g.ToList().Count, 
                 AverageCost = g.ToList()
-                    .Average(x => float.Parse(x.unitprice) * int.Parse(x.quantity) * (1 - double.Parse(x.discount))), 
+                    .Average(x => x.unitprice * x.quantity * (1 - x.discount)), 
                 MaxCost = g.ToList()
-                    .Max(x => float.Parse(x.unitprice) * int.Parse(x.quantity) * (1 - double.Parse(x.discount)))};
-
+                    .Max(x => x.unitprice * x.quantity * (1 - x.discount))};
+        
         foreach (var record in result.ToList())
         {
             Console.WriteLine($"Employee: {record.Employee}, " +
-                              $"Count: {record.Orders.ToString()}, Average: {record.AverageCost.ToString()}, " +
-                              $"Max: {record.MaxCost.ToString()}");
+                              $"Count: {record.Orders.ToString()}, Average: {String.Format("{0:0.00}", record.AverageCost)}, " +
+                              $"Max: {String.Format("{0:0.00}", record.AverageCost)}");
         }
 
 
     }
 
-    public static void printData()
+    private static void printData()
     {
-        foreach(var employee in employees)
-            Console.WriteLine(employee.ToString());
+        // foreach(var orderDetail in orderDetails)
+        //     Console.WriteLine(orderDetail.ToString());
     }
 
 }

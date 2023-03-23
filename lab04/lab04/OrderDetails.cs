@@ -4,9 +4,9 @@ public class OrderDetails
 {
     public String orderid { get; set; }
     public String productid { get; set; }
-    public String unitprice { get; set; }
-    public String quantity { get; set; }
-    public String discount { get; set; }
+    public double unitprice { get; set; }
+    public double quantity { get; set; }
+    public double discount { get; set; }
     
     public static OrderDetails FromCsv(String csvLine)
     {
@@ -14,9 +14,9 @@ public class OrderDetails
         OrderDetails orderDetails = new OrderDetails();
         orderDetails.orderid = values[0];
         orderDetails.productid = values[1];
-        orderDetails.unitprice = values[2];
-        orderDetails.quantity = values[3];
-        orderDetails.discount = values[4];
+        orderDetails.unitprice = double.Parse(values[2].Replace(".", ","));
+        orderDetails.quantity = double.Parse(values[3].Replace(".", ","));
+        orderDetails.discount = double.Parse(values[4].Replace(".", ","));
         return orderDetails;
     }
     
