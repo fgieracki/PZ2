@@ -1,0 +1,109 @@
+using System;
+using System.IO;
+using System.Threading;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Pobieramy ścieżkę do katalogu, w którym ma być przeprowadzone wyszukiwanie.
+        Console.Write("Podaj ścieżkę do katalogu: ");
+        string dirPath = Console.ReadLine();
+
+        // Pobieramy napis, który powinien znajdować się w nazwie plików.
+        Console.Write("Podaj napis, który ma być zawarty w nazwie plików: ");
+        string searchString = Console.ReadLine();
+
+        // Tworzymy obiekt klasy SearchThread i przekazujemy mu ścieżkę do katalogu i napis do wyszukania.
+        SearchThread searchThread = new SearchThread(dirPath, searchString);
+
+        // Podpinamy metodę PrintFileName do zdarzenia FileFound.
+        searchThread.FileFound += PrintFileName;
+
+        // Tworzymy wątek i uruchamiamy go.
+        Thread thread = new Thread(searchThread.Run);
+        thread.Start();
+
+        // Czekamy, aż wątek zakończy swoje działanie.
+        thread.Join();
+
+        Console.WriteLine("Wyszukiwanie zakończone.");
+        Console.ReadLine();
+    }
+
+    private static void PrintFileName(object sender, FileFoundEventArgs e)
+    {
+        // Wypisujemy nazwę pliku do konsoli.
+        Console.WriteLine(e.FileName);
+    }
+}
+
+class SearchThread
+{
+    private string dirPath;
+    private string searchString;
+
+    // Deklarujemy delegat i zdarzenie.
+    public delegate void FileFoundEventHandler(object sender, FileFoundEventArgs e);
+    public event FileFoundEventHandler FileFound;
+
+    public SearchThread(string dirPath, string searchString)
+    {
+        this.dirPath = dirPath;
+        this.searchString = searchString;
+    }
+
+    public void Run()
+    {
+        // Wywołujemy funkcję RecursiveSearch, która rekurencyjnie przeszukuje podkatalogi.
+        RecursiveSearch(this.dirPath, this.searchString);
+    }
+
+    private void RecursiveSearch(string path, string searchString)
+    {
+        try
+        {
+            // Pobieramy nazwy wszystkich plików w aktualnym katalogu.
+            string[] files = Directory.GetFiles(path);
+
+            foreach (string file in files)
+            {
+                // Sprawdzamy, czy nazwa pliku zawiera podany napis.
+                if (file.Contains(searchString))
+                {
+                    // Jeśli tak, to wywołujemy zdarzenie FileFound, przekazując jako argument nazwę pliku.
+                    OnFileFound(new FileFoundEventArgs(file));
+                }
+            }
+
+            // Pobieramy nazwy wszystkich podkatalogów w aktualnym katalogu i rekurencyjnie przeszukujemy je.
+            string[] directories = Directory.GetDirectories(path);
+            foreach (string directory in directories)
+            {
+                RecursiveSearch(directory, searchString);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    protected virtual void OnFileFound(FileFoundEventArgs e)
+    {
+        // Wywołujemy zdarzenie FileFound.
+        FileFound?.Invoke(this, e);
+    }
+}
+
+class FileFoundEventArgs : EventArgs
+{
+    public string FileName { get; }
+
+    public FileFoundEventArgs(string fileName)
+    {
+        this.FileName = fileName;
+    }
+}
+
+
