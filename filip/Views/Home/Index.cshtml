@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Lab 10</h1>
+    
+    @if (ViewData["Error"] != null)
+    {
+        <p style="color:red;">
+            @ViewData["Error"]
+        </p>
+    }
+    
+    
+    <form method="POST" action="/home/login">
+        <input required name="email" placeholder="email"/>
+        <input required name="password" placeholder="password" type="password"/>
+        <button type="submit">Sign in</button>
+    </form>
+</div>

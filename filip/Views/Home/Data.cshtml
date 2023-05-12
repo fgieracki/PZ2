@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Data";
+}
+
+<div class="text-center">
+    <table>
+        <thead>
+        <tr>
+            <td>#</td>
+            <td>Email</td>
+            <td>Content</td>
+        </tr>
+        </thead>
+        <tbody>
+        @* @foreach (var item in (ViewData["records"] as List<Record>)!) *@
+        @* { *@
+        @*     <tr> *@
+        @*         <td>@item.Id </td> *@
+        @*         <td>@item.Email </td> *@
+        @*         <td>@item.Content </td> *@
+        @*     </tr> *@
+        @* } *@
+        </tbody>
+    </table>
+
+    <p>Add new record</p>
+    <form method="post" action="/Home/Insert">
+        <input name="content" placeholder="Content"/>
+        <button type="submit">Insert</button>
+    </form>
+
+
+</div>
